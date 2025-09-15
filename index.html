@@ -120,7 +120,7 @@
         <p><strong>What it is:</strong> Each image version is labeled with a <em>tag</em> like <code>:latest</code> or <code>:4.0</code>. If you don’t specify one, Docker pulls <code>:latest</code>.</p>
         <div class="callout"><span class="tag">Why</span> Locking versions avoids surprises when upstream images change.</div>
         <div class="codewrap">
-          <button class="copy" data-copy="docker run redis\ndocker run redis:4.0">Copy</button>
+          "docker run redis\ndocker run redis:4.0">Copy</button>
           <pre><code><span class="token-c"># runs latest version</span>
 <span class="token-k">docker run</span> redis
 <span class="token-c"># runs Redis version 4.0</span>
@@ -139,7 +139,7 @@
           <li><code>-t</code> allocates a pseudo‑TTY (nice prompts & colors)</li>
         </ul>
         <div class="codewrap">
-          <button class="copy" data-copy="docker run -it ubuntu">Copy</button>
+          "docker run -it ubuntu">Copy</button>
           <pre><code><span class="token-k">docker run -it</span> ubuntu</code></pre>
         </div>
         <p class="note">Without <code>-it</code>, interactive programs may look frozen because there’s no attached terminal.</p>
@@ -151,7 +151,7 @@
         <h2>Expose your app to the outside with <code>-p</code></h2>
         <p>Containers run in their own network namespace. Use <code>-p &lt;host&gt;:&lt;container&gt;</code> so your host can reach the app.</p>
         <div class="codewrap">
-          <button class="copy" data-copy="docker run -p 80:5000 myapp">Copy</button>
+          "docker run -p 80:5000 myapp">Copy</button>
           <pre><code><span class="token-k">docker run -p</span> <span class="token-s">80:5000</span> myapp</code></pre>
         </div>
         <div class="callout"><span class="tag">Why</span> App listens on <code>5000</code> inside the container, but you visit <code>http://localhost:80</code> on your machine.</div>
@@ -163,7 +163,7 @@
         <h2>Keep your data safe with <code>-v</code> volumes</h2>
         <p>Deleting a container also deletes its writable layer. Map a host folder to the container to persist data.</p>
         <div class="codewrap">
-          <button class="copy" data-copy="docker run -v /opt/data:/var/lib/mysql mysql">Copy</button>
+          "docker run -v /opt/data:/var/lib/mysql mysql">Copy</button>
           <pre><code><span class="token-k">docker run -v</span> <span class="token-s">/opt/data:/var/lib/mysql</span> mysql</code></pre>
         </div>
         <p class="note">Use <code>docker volume create</code> for named volumes; they’re portable and managed by Docker.</p>
@@ -174,7 +174,7 @@
         <span class="kicker">5 · Inspecting Containers</span>
         <h2>See everything with <code>docker inspect</code></h2>
         <div class="codewrap">
-          <button class="copy" data-copy="docker inspect &lt;container-id&gt;">Copy</button>
+          "docker inspect &lt;container-id&gt;">Copy</button>
           <pre><code><span class="token-k">docker inspect</span> &lt;container-id&gt;</code></pre>
         </div>
         <p>Outputs JSON: environment, mounts, network, state, entrypoint, and more—perfect for debugging.</p>
@@ -185,7 +185,7 @@
         <span class="kicker">6 · Viewing Logs</span>
         <h2>Read output from background apps with <code>docker logs</code></h2>
         <div class="codewrap">
-          <button class="copy" data-copy="docker logs &lt;container-id&gt;">Copy</button>
+          "docker logs &lt;container-id&gt;">Copy</button>
           <pre><code><span class="token-k">docker logs</span> &lt;container-id&gt;</code></pre>
         </div>
         <p>Use with <code>-f</code> to follow logs live. Handy after running <code>-d</code> (detached mode).</p>
