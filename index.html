@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Beginner‑Friendly Guide</title>
+  <title>Beginner‑Friendly Guide to <code>docker run</code></title>
   <meta name="description" content="A beautiful, beginner‑friendly one‑page guide to docker run with tags, interactive mode, port mapping, volumes, logs and inspect." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,6 +17,7 @@
       --text:#e6eefc;        /* main text */
       --muted:#a2b0c8;       /* muted text */
       --ok:#34d399;          /* green */
+      --ok-dark:#059669;     /* green - hover */
       --warn:#f59e0b;        /* amber */
       --danger:#fb7185;      /* rose */
       --code-bg:#0a0f1a;     /* code background */
@@ -34,18 +35,8 @@
       line-height:1.65; font-size:16px;
     }
     a{color:var(--accent)}
-    header{
-      position:sticky; top:0; z-index:10; backdrop-filter: blur(10px);
-      background: linear-gradient( to bottom, rgba(11,18,32,.9), rgba(11,18,32,.6) );
-      border-bottom:1px solid var(--border);
-    }
+    /* Removed sticky header & top nav per user request */
     .wrap{max-width:1100px; margin:0 auto; padding:0 20px}
-    .nav{display:flex; align-items:center; gap:20px; padding:14px 0}
-    .brand{display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.2px}
-    .logo{width:34px; height:34px; display:grid; place-items:center; border-radius:12px; background:linear-gradient(135deg,var(--accent),var(--accent-2)); box-shadow:var(--shadow)}
-    .navlinks{margin-left:auto; display:flex; gap:14px; flex-wrap:wrap}
-    .navlinks a{padding:8px 12px; border:1px solid transparent; border-radius:10px; color:var(--text); text-decoration:none; opacity:.85}
-    .navlinks a:hover{border-color:var(--border); opacity:1}
     .hero{padding:56px 0 28px}
     .title{font-size:clamp(28px,4vw,44px); line-height:1.1; margin:8px 0 12px; font-weight:800}
     .subtitle{color:var(--muted); max-width:780px}
@@ -69,8 +60,11 @@
     pre{position:relative; margin:14px 0 0; background:var(--code-bg); border:1px solid var(--border); border-radius:14px; overflow:auto}
     code{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-size:14px}
     .codewrap{position:relative}
-    .copy{position:absolute; top:10px; right:10px; border:1px solid var(--border); background:rgba(255,255,255,.04); color:var(--text); padding:6px 10px; border-radius:10px; cursor:pointer}
-    .copy:active{transform:scale(.97)}
+
+    /* New: proper green copy button with spacing & white text */
+    .copy{display:inline-block; margin-top:10px; border:none; background:var(--ok); color:#fff; padding:10px 14px; border-radius:10px; cursor:pointer; font-weight:800}
+    .copy:hover{background:var(--ok-dark)}
+
     .token-k{color:#7dd3fc}
     .token-c{color:#94a3b8}
     .token-s{color:#d1fae5}
@@ -91,25 +85,29 @@
   </style>
 </head>
 <body>
-  <header>
-    <div class="wrap nav">
-      <div class="brand">
-        <div class="logo" aria-hidden="true">🐳</div>
-        <div>Beginner Guide: <span style="color:var(--accent)">docker commands</span></div>
-      </div>
-   
-    </div>
-  </header>
+  <!-- Removed header/nav per request -->
 
   <main class="wrap">
     <section class="hero">
+      <div class="badges">
+        <span class="badge">Zero‑to‑Hero</span>
+        <span class="badge">Copy‑paste examples</span>
+        <span class="badge">Safe defaults</span>
+      </div>
       <h1 class="title">A Beautiful, Beginner‑Friendly Guide to <code>docker run</code></h1>
       <p class="subtitle">Learn the essentials: Image tags, interactive mode (<code>-it</code>), port mapping (<code>-p</code>), volumes (<code>-v</code>), and how to inspect and read logs. Everything you need to get productive quickly.</p>
       <div class="cta">
         <a class="btn" href="#tags">Get Started ↓</a>
         <a class="btn secondary" href="https://docs.docker.com/engine/reference/run/" target="_blank" rel="noopener">Official docs</a>
       </div>
-    
+      <div class="toc">
+        <a href="#tags">1. Tags</a>
+        <a href="#interactive">2. Interactive (-it)</a>
+        <a href="#ports">3. Port Mapping (-p)</a>
+        <a href="#volumes">4. Persist Data (-v)</a>
+        <a href="#inspect">5. Inspect</a>
+        <a href="#logs">6. Logs</a>
+      </div>
     </section>
 
     <div class="grid">
@@ -120,12 +118,12 @@
         <p><strong>What it is:</strong> Each image version is labeled with a <em>tag</em> like <code>:latest</code> or <code>:4.0</code>. If you don’t specify one, Docker pulls <code>:latest</code>.</p>
         <div class="callout"><span class="tag">Why</span> Locking versions avoids surprises when upstream images change.</div>
         <div class="codewrap">
-          "docker run redis\ndocker run redis:4.0"><button>Copy</button>
           <pre><code><span class="token-c"># runs latest version</span>
 <span class="token-k">docker run</span> redis
 <span class="token-c"># runs Redis version 4.0</span>
 <span class="token-k">docker run</span> redis<span class="token-s">:4.0</span>
 </code></pre>
+          <button class="copy" data-copy="docker run redis\ndocker run redis:4.0">📋 Copy</button>
         </div>
         <p class="note">Tip: check tags on Docker Hub. Many projects also publish <code>:alpine</code> or <code>:slim</code> variants for smaller images.</p>
       </article>
@@ -139,8 +137,8 @@
           <li><code>-t</code> allocates a pseudo‑TTY (nice prompts & colors)</li>
         </ul>
         <div class="codewrap">
-          "docker run -it ubuntu"><button>Copy</button>
           <pre><code><span class="token-k">docker run -it</span> ubuntu</code></pre>
+          <button class="copy" data-copy="docker run -it ubuntu">📋 Copy</button>
         </div>
         <p class="note">Without <code>-it</code>, interactive programs may look frozen because there’s no attached terminal.</p>
       </article>
@@ -151,8 +149,8 @@
         <h2>Expose your app to the outside with <code>-p</code></h2>
         <p>Containers run in their own network namespace. Use <code>-p &lt;host&gt;:&lt;container&gt;</code> so your host can reach the app.</p>
         <div class="codewrap">
-          "docker run -p 80:5000 myapp"><button>Copy</button>
           <pre><code><span class="token-k">docker run -p</span> <span class="token-s">80:5000</span> myapp</code></pre>
+          <button class="copy" data-copy="docker run -p 80:5000 myapp">📋 Copy</button>
         </div>
         <div class="callout"><span class="tag">Why</span> App listens on <code>5000</code> inside the container, but you visit <code>http://localhost:80</code> on your machine.</div>
       </article>
@@ -163,8 +161,8 @@
         <h2>Keep your data safe with <code>-v</code> volumes</h2>
         <p>Deleting a container also deletes its writable layer. Map a host folder to the container to persist data.</p>
         <div class="codewrap">
-          "docker run -v /opt/data:/var/lib/mysql mysql"><button>Copy</button>
           <pre><code><span class="token-k">docker run -v</span> <span class="token-s">/opt/data:/var/lib/mysql</span> mysql</code></pre>
+          <button class="copy" data-copy="docker run -v /opt/data:/var/lib/mysql mysql">📋 Copy</button>
         </div>
         <p class="note">Use <code>docker volume create</code> for named volumes; they’re portable and managed by Docker.</p>
       </article>
@@ -174,9 +172,8 @@
         <span class="kicker">5 · Inspecting Containers</span>
         <h2>See everything with <code>docker inspect</code></h2>
         <div class="codewrap">
-          "docker inspect &lt;container-id&gt;">
-          <<button>Copy</button>
           <pre><code><span class="token-k">docker inspect</span> &lt;container-id&gt;</code></pre>
+          <button class="copy" data-copy="docker inspect <container-id>">📋 Copy</button>
         </div>
         <p>Outputs JSON: environment, mounts, network, state, entrypoint, and more—perfect for debugging.</p>
       </article>
@@ -186,8 +183,8 @@
         <span class="kicker">6 · Viewing Logs</span>
         <h2>Read output from background apps with <code>docker logs</code></h2>
         <div class="codewrap">
-          "docker logs &lt;container-id&gt;">Copy</button>
           <pre><code><span class="token-k">docker logs</span> &lt;container-id&gt;</code></pre>
+          <button class="copy" data-copy="docker logs <container-id>">📋 Copy</button>
         </div>
         <p>Use with <code>-f</code> to follow logs live. Handy after running <code>-d</code> (detached mode).</p>
       </article>
@@ -207,7 +204,7 @@
     </div>
 
     <footer>
-      <p class="small">Made with 🐳 &nbsp;—&nbsp; Host this on GitHub Pages: create a repo, add this <code>index.html</code>, then enable <em>Settings → Pages</em>. Optional: add <code>.nojekyll</code> if you serve folders starting with <code>_</code>.</p>
+      <p class="small">Made with 🐳 — Host this on GitHub Pages: create a repo, add this <code>index.html</code>, then enable <em>Settings → Pages</em>. Optional: add <code>.nojekyll</code> if you serve folders starting with <code>_</code>.</p>
     </footer>
   </main>
 
@@ -220,10 +217,10 @@
         const text = btn.getAttribute('data-copy');
         try{
           await navigator.clipboard.writeText(text);
-          const old = btn.textContent; btn.textContent='Copied!';
-          setTimeout(()=>btn.textContent=old,1000);
+          const old = btn.textContent; btn.textContent='✅ Copied!';
+          setTimeout(()=>btn.textContent='📋 Copy',1200);
         }catch(e){
-          btn.textContent='Copy failed'; setTimeout(()=>btn.textContent='Copy',1200);
+          btn.textContent='Copy failed'; setTimeout(()=>btn.textContent='📋 Copy',1400);
         }
       });
     });
