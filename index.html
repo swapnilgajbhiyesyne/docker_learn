@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Beginner‑Friendly Guide to <code>docker run</code></title>
+  <meta name="description" content="A beautiful, beginner‑friendly one‑page guide to docker run with tags, interactive mode, port mapping, volumes, logs and inspect." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b1220;          /* deep navy */
+      --panel:#101a2e;       /* card background */
+      --accent:#7dd3fc;      /* cyan */
+      --accent-2:#a78bfa;    /* purple */
+      --text:#e6eefc;        /* main text */
+      --muted:#a2b0c8;       /* muted text */
+      --ok:#34d399;          /* green */
+      --warn:#f59e0b;        /* amber */
+      --danger:#fb7185;      /* rose */
+      --code-bg:#0a0f1a;     /* code background */
+      --border:#1e2a44;
+      --shadow: 0 10px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.02);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0; background: radial-gradient(1200px 600px at 80% -10%, rgba(167,139,250,.20), transparent 60%),
+                                  radial-gradient(900px 500px at -10% 20%, rgba(125,211,252,.18), transparent 60%),
+                                  var(--bg);
+      color:var(--text); font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      line-height:1.65; font-size:16px;
+    }
+    a{color:var(--accent)}
+    header{
+      position:sticky; top:0; z-index:10; backdrop-filter: blur(10px);
+      background: linear-gradient( to bottom, rgba(11,18,32,.9), rgba(11,18,32,.6) );
+      border-bottom:1px solid var(--border);
+    }
+    .wrap{max-width:1100px; margin:0 auto; padding:0 20px}
+    .nav{display:flex; align-items:center; gap:20px; padding:14px 0}
+    .brand{display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.2px}
+    .logo{width:34px; height:34px; display:grid; place-items:center; border-radius:12px; background:linear-gradient(135deg,var(--accent),var(--accent-2)); box-shadow:var(--shadow)}
+    .navlinks{margin-left:auto; display:flex; gap:14px; flex-wrap:wrap}
+    .navlinks a{padding:8px 12px; border:1px solid transparent; border-radius:10px; color:var(--text); text-decoration:none; opacity:.85}
+    .navlinks a:hover{border-color:var(--border); opacity:1}
+    .hero{padding:56px 0 28px}
+    .title{font-size:clamp(28px,4vw,44px); line-height:1.1; margin:8px 0 12px; font-weight:800}
+    .subtitle{color:var(--muted); max-width:780px}
+    .cta{display:flex; gap:12px; margin-top:18px; flex-wrap:wrap}
+    .btn{background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:#051024; border:none; padding:12px 16px; border-radius:12px; font-weight:700; cursor:pointer; box-shadow:var(--shadow)}
+    .btn.secondary{background:transparent; color:var(--text); border:1px solid var(--border)}
+
+    .grid{display:grid; grid-template-columns:repeat(12,1fr); gap:18px}
+    .card{grid-column:span 12; background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0));
+          border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); padding:22px}
+    @media (min-width:800px){ .card.half{grid-column:span 6} }
+
+    .kicker{font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); font-weight:800}
+    h2{margin:0 0 12px; font-size:clamp(22px,3vw,28px)}
+    h3{margin:18px 0 8px; font-size:18px}
+    p{margin:8px 0}
+
+    .callout{display:flex; gap:12px; padding:12px 14px; border:1px dashed var(--border); border-radius:12px; background:rgba(255,255,255,.02)}
+    .callout .tag{font-weight:800; color:var(--ok)}
+
+    pre{position:relative; margin:14px 0 0; background:var(--code-bg); border:1px solid var(--border); border-radius:14px; overflow:auto}
+    code{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-size:14px}
+    .codewrap{position:relative}
+    .copy{position:absolute; top:10px; right:10px; border:1px solid var(--border); background:rgba(255,255,255,.04); color:var(--text); padding:6px 10px; border-radius:10px; cursor:pointer}
+    .copy:active{transform:scale(.97)}
+    .token-k{color:#7dd3fc}
+    .token-c{color:#94a3b8}
+    .token-s{color:#d1fae5}
+
+    .list{margin:8px 0 0; padding-left:18px}
+    .badge{display:inline-flex; gap:8px; align-items:center; padding:6px 10px; border-radius:999px; font-weight:700; border:1px solid var(--border); background:rgba(255,255,255,.02)}
+    .badges{display:flex; gap:10px; flex-wrap:wrap}
+
+    footer{margin:50px 0 70px; color:var(--muted)}
+    .small{font-size:13px}
+    .toc{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+    .toc a{background:rgba(255,255,255,.04); border:1px solid var(--border); padding:8px 10px; border-radius:10px; text-decoration:none; color:var(--text)}
+
+    .tip{color:var(--warn); font-weight:700}
+    .note{color:var(--muted); font-style:italic}
+    .hr{height:1px; background:linear-gradient(90deg, transparent, var(--border), transparent); margin:22px 0}
+    .top{position:fixed; right:18px; bottom:18px; background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:#051024; border:none; padding:10px 12px; border-radius:12px; font-weight:800; cursor:pointer; box-shadow:var(--shadow)}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap nav">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">🐳</div>
+        <div>Beginner Guide: <span style="color:var(--accent)">docker run</span></div>
+      </div>
+      <nav class="navlinks">
+        <a href="#tags">Tags</a>
+        <a href="#interactive">Interactive</a>
+        <a href="#ports">Ports</a>
+        <a href="#volumes">Volumes</a>
+        <a href="#inspect">Inspect</a>
+        <a href="#logs">Logs</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div class="badges">
+        <span class="badge">Zero‑to‑Hero</span>
+        <span class="badge">Copy‑paste examples</span>
+        <span class="badge">Safe defaults</span>
+      </div>
+      <h1 class="title">A Beautiful, Beginner‑Friendly Guide to <code>docker run</code></h1>
+      <p class="subtitle">Learn the essentials: Image tags, interactive mode (<code>-it</code>), port mapping (<code>-p</code>), volumes (<code>-v</code>), and how to inspect and read logs. Everything you need to get productive quickly.</p>
+      <div class="cta">
+        <a class="btn" href="#tags">Get Started ↓</a>
+        <a class="btn secondary" href="https://docs.docker.com/engine/reference/run/" target="_blank" rel="noopener">Official docs</a>
+      </div>
+      <div class="toc">
+        <a href="#tags">1. Tags</a>
+        <a href="#interactive">2. Interactive (-it)</a>
+        <a href="#ports">3. Port Mapping (-p)</a>
+        <a href="#volumes">4. Persist Data (-v)</a>
+        <a href="#inspect">5. Inspect</a>
+        <a href="#logs">6. Logs</a>
+      </div>
+    </section>
+
+    <div class="grid">
+      <!-- 1. Tags -->
+      <article id="tags" class="card">
+        <span class="kicker">1 · Running Containers with Tags</span>
+        <h2>Choose the exact image version with <em>tags</em></h2>
+        <p><strong>What it is:</strong> Each image version is labeled with a <em>tag</em> like <code>:latest</code> or <code>:4.0</code>. If you don’t specify one, Docker pulls <code>:latest</code>.</p>
+        <div class="callout"><span class="tag">Why</span> Locking versions avoids surprises when upstream images change.</div>
+        <div class="codewrap">
+          <button class="copy" data-copy="docker run redis\ndocker run redis:4.0">Copy</button>
+          <pre><code><span class="token-c"># runs latest version</span>
+<span class="token-k">docker run</span> redis
+<span class="token-c"># runs Redis version 4.0</span>
+<span class="token-k">docker run</span> redis<span class="token-s">:4.0</span>
+</code></pre>
+        </div>
+        <p class="note">Tip: check tags on Docker Hub. Many projects also publish <code>:alpine</code> or <code>:slim</code> variants for smaller images.</p>
+      </article>
+
+      <!-- 2. Interactive -->
+      <article id="interactive" class="card half">
+        <span class="kicker">2 · Interactive Containers</span>
+        <h2>Use <code>-it</code> for keyboard input & prompts</h2>
+        <ul class="list">
+          <li><code>-i</code> keeps STDIN open (send input to the container)</li>
+          <li><code>-t</code> allocates a pseudo‑TTY (nice prompts & colors)</li>
+        </ul>
+        <div class="codewrap">
+          <button class="copy" data-copy="docker run -it ubuntu">Copy</button>
+          <pre><code><span class="token-k">docker run -it</span> ubuntu</code></pre>
+        </div>
+        <p class="note">Without <code>-it</code>, interactive programs may look frozen because there’s no attached terminal.</p>
+      </article>
+
+      <!-- 3. Ports -->
+      <article id="ports" class="card half">
+        <span class="kicker">3 · Port Mapping</span>
+        <h2>Expose your app to the outside with <code>-p</code></h2>
+        <p>Containers run in their own network namespace. Use <code>-p &lt;host&gt;:&lt;container&gt;</code> so your host can reach the app.</p>
+        <div class="codewrap">
+          <button class="copy" data-copy="docker run -p 80:5000 myapp">Copy</button>
+          <pre><code><span class="token-k">docker run -p</span> <span class="token-s">80:5000</span> myapp</code></pre>
+        </div>
+        <div class="callout"><span class="tag">Why</span> App listens on <code>5000</code> inside the container, but you visit <code>http://localhost:80</code> on your machine.</div>
+      </article>
+
+      <!-- 4. Volumes -->
+      <article id="volumes" class="card">
+        <span class="kicker">4 · Persisting Data</span>
+        <h2>Keep your data safe with <code>-v</code> volumes</h2>
+        <p>Deleting a container also deletes its writable layer. Map a host folder to the container to persist data.</p>
+        <div class="codewrap">
+          <button class="copy" data-copy="docker run -v /opt/data:/var/lib/mysql mysql">Copy</button>
+          <pre><code><span class="token-k">docker run -v</span> <span class="token-s">/opt/data:/var/lib/mysql</span> mysql</code></pre>
+        </div>
+        <p class="note">Use <code>docker volume create</code> for named volumes; they’re portable and managed by Docker.</p>
+      </article>
+
+      <!-- 5. Inspect -->
+      <article id="inspect" class="card half">
+        <span class="kicker">5 · Inspecting Containers</span>
+        <h2>See everything with <code>docker inspect</code></h2>
+        <div class="codewrap">
+          <button class="copy" data-copy="docker inspect &lt;container-id&gt;">Copy</button>
+          <pre><code><span class="token-k">docker inspect</span> &lt;container-id&gt;</code></pre>
+        </div>
+        <p>Outputs JSON: environment, mounts, network, state, entrypoint, and more—perfect for debugging.</p>
+      </article>
+
+      <!-- 6. Logs -->
+      <article id="logs" class="card half">
+        <span class="kicker">6 · Viewing Logs</span>
+        <h2>Read output from background apps with <code>docker logs</code></h2>
+        <div class="codewrap">
+          <button class="copy" data-copy="docker logs &lt;container-id&gt;">Copy</button>
+          <pre><code><span class="token-k">docker logs</span> &lt;container-id&gt;</code></pre>
+        </div>
+        <p>Use with <code>-f</code> to follow logs live. Handy after running <code>-d</code> (detached mode).</p>
+      </article>
+
+      <div class="card">
+        <h3>Quick recap</h3>
+        <ul class="list">
+          <li><strong>Tags</strong> pin versions (<code>redis:4.0</code>)</li>
+          <li><strong>-it</strong> for interactive terminals</li>
+          <li><strong>-p</strong> exposes ports (<code>host:container</code>)</li>
+          <li><strong>-v</strong> maps storage to persist data</li>
+          <li><strong>inspect</strong> dumps full config; <strong>logs</strong> shows output</li>
+        </ul>
+        <div class="hr"></div>
+        <p class="small">Pro tip: Combine flags! Example: <code>docker run -d -p 8080:80 --name web nginx:alpine</code></p>
+      </div>
+    </div>
+
+    <footer>
+      <p class="small">Made with 🐳 &nbsp;—&nbsp; Host this on GitHub Pages: create a repo, add this <code>index.html</code>, then enable <em>Settings → Pages</em>. Optional: add <code>.nojekyll</code> if you serve folders starting with <code>_</code>.</p>
+    </footer>
+  </main>
+
+  <button class="top" onclick="window.scrollTo({top:0,behavior:'smooth'})">Top ↑</button>
+
+  <script>
+    // Copy buttons for code blocks
+    document.querySelectorAll('.copy').forEach(btn=>{
+      btn.addEventListener('click', async ()=>{
+        const text = btn.getAttribute('data-copy');
+        try{
+          await navigator.clipboard.writeText(text);
+          const old = btn.textContent; btn.textContent='Copied!';
+          setTimeout(()=>btn.textContent=old,1000);
+        }catch(e){
+          btn.textContent='Copy failed'; setTimeout(()=>btn.textContent='Copy',1200);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
